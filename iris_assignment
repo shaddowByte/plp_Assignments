@@ -1,0 +1,76 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.datasets import load_iris
+
+# -----------------------------
+# Task 1: Load and Explore Data
+# -----------------------------
+
+try:
+    
+    iris_data = load_iris()
+    df = pd.DataFrame(iris_data.data, columns=iris_data.feature_names)
+    df["species"] = pd.Series(iris_data.target).map(dict(enumerate(iris_data.target_names)))
+except Exception as e:
+    print("Something went wrong while loading the data:", e)
+
+
+print("Preview of the data:")
+print(df.head())
+
+
+print("\nData Types:")
+print(df.dtypes)
+
+print("\nMissing Values:")
+print(df.isnull().sum())
+
+df = df.dropna()
+
+# ----------------------------
+# Task 2: Data Analysis
+# ----------------------------
+
+print("\nSummary Statistics:")
+print(df.describe())
+
+print("\nAverage values for each species:")
+print(df.groupby("species").mean())
+
+# ----------------------------
+# Task 3: Visualization
+# ----------------------------
+
+plt.figure(figsize=(8, 4))
+plt.plot(df["sepal length (cm)"][:30], label="Sepal Length")
+plt.plot(df["sepal width (cm)"][:30], label="Sepal Width")
+plt.title("Sepal Measurements (First 30 Samples)")
+plt.xlabel("Sample Number")
+plt.ylabel("Length in cm")
+plt.legend()
+plt.tight_layout()
+plt.show()
+
+avg_petal_length = df.groupby("species")["petal length (cm)"].mean()
+avg_petal_length.plot(kind="bar", color="skyblue")
+plt.title("Average Petal Length per Species")
+plt.ylabel("Length in cm")
+plt.xlabel("Species")
+plt.tight_layout()
+plt.show()
+
+# Histogram of sepal length
+df["sepal length (cm)"].plot(kind="hist", bins=10, edgecolor="black", color="orange")
+plt.title("Distribution of Sepal Length")
+plt.xlabel("Sepal Length (cm)")
+plt.tight_layout()
+plt.show()
+
+# Scatter plot: Sepal length vs Petal length
+sns.scatterplot(data=df, x="sepal length (cm)", y="petal length (cm)", hue="species")
+plt.title("Sepal vs Petal Length")
+plt.xlabel("Sepal Length (cm)")
+plt.ylabel("Petal Length (cm)")
+plt.tight_layout()
+plt.show()
